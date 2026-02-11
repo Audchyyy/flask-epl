@@ -81,12 +81,11 @@ def update_player(id):
         player.img = request.form['img']
         player.club_id = int(request.form['club_id'])
 
-        clean_sheets = request.form.get('clean_sheets')
-
-        if clean_sheets == '' or clean_sheets is None:
+        if player.position.lower() != 'goalkeeper':
             player.clean_sheets = None
         else:
-            player.clean_sheets = int(clean_sheets)
+            clean_sheets = request.form.get('clean_sheets')
+            player.clean_sheets = int(clean_sheets) if clean_sheets else None
 
         db.session.commit()
         flash('Update player successfully', 'success')
@@ -98,20 +97,22 @@ def update_player(id):
 
 @player_bp.route('/<int:id>/clean_sheets', methods=['GET', 'POST'])
 def clean_sheets(id):
-  player = db.session.get(Player, id)
-  if request.method == 'POST':
-    clean_sheets = request.form.get('clean_sheets')
+    player = db.get_or_404(Player, id)
 
-  if clean_sheets == '':
-    player.clean_sheets = None
-  else:
-    player.clean_sheets = int(clean_sheets)
+    if request.method == 'POST':
+        clean_sheets = request.form.get('clean_sheets')
 
-    db.session.add(player)
-    db.session.commit()
-    flash('update clean sheets successfully', 'success')
-    return redirect(url_for('players.index'))
+        if clean_sheets == '' or clean_sheets is None:
+            player.clean_sheets = None
+        else:
+            player.clean_sheets = int(clean_sheets)
 
-  return render_template('players/clean_sheets.html',
-                        title='Clean Sheets Page',
-                        player=player)
+        db.session.commit()
+        flash('update clean sheets successfully', 'success')
+        return redirect(url_for('players.index'))
+
+    return render_template(
+        'players/clean_sheets.html',
+        title='Clean Sheets Page',
+        player=player
+    )
