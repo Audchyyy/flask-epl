@@ -69,6 +69,7 @@ def update_club(id):
   return render_template('clubs/update_club.html',
                          title='Update Club Page',
                          club=club)
+  
 
 @app.route('/players')
 def all_players():
