@@ -1,3 +1,4 @@
+from turtle import position
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from epl.extensions import db
 from epl.models import Club, Player
@@ -21,10 +22,12 @@ def new_player():
     goals = int(request.form['goals'])
 
     clean_sheets = request.form.get('clean_sheets')
-    if clean_sheets == '':
-        clean_sheets = None
+    if position.lower() != 'goalkeeper':
+         clean_sheets = None
+    elif clean_sheets == '' or clean_sheets is None:
+         clean_sheets = None
     else:
-        clean_sheets = int(clean_sheets)
+         clean_sheets = int(clean_sheets)
 
     squad_no = int(request.form['squad_no'])
     img = request.form['img']
